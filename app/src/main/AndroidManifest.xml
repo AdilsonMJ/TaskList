@@ -14,6 +14,11 @@
         android:theme="@style/Theme.TaskList"
         tools:targetApi="31">
         <activity
+            android:label="New Task"
+            android:name=".NewTaskActivity"
+            android:exported="false" />
+        <activity
+            android:label="Tasks"
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>

@@ -1,16 +1,19 @@
 package com.adilson.tasklist
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.adilson.tasklist.databinding.ResItemTaskBinding
 
 class TaskAdapter(
-        private val onDeleteClick: (Task) -> Unit
+    private val onClick: (Task) -> Unit,
+    private val onDeleteClick: (Task) -> Unit
     ) : RecyclerView.Adapter<TaskAdapter.TaskViewHolder>(){
 
     private val tasks = mutableListOf<Task>()
@@ -31,11 +34,31 @@ class TaskAdapter(
         }
 
 
-        fun bind(task: Task, onDeleteClick: (Task) -> Unit){
+        fun bind(
+            task: Task,
+            onDeleteClick: (Task) -> Unit,
+            onClick: (Task) -> Unit,
+        ) {
             tvTitleTask.text = task.title
             imgBntDeleteTask.setOnClickListener {
                 onDeleteClick(task)
             }
+
+            clTask.setOnClickListener{
+                onClick(task)
+            }
+
+            if (task.done){
+                tvTitleTask.setTextColor(ContextCompat.getColor(itemView.context, R.color.white))
+                imgBntDeleteTask.setImageResource(R.drawable.trash_white)
+                clTask.setBackgroundColor(ContextCompat.getColor(itemView.context, R.color.medium_sea_green))
+
+            }else{
+                tvTitleTask.setTextColor(ContextCompat.getColor(itemView.context, R.color.black))
+                imgBntDeleteTask.setImageResource(R.drawable.trash_darker)
+                clTask.setBackgroundColor(ContextCompat.getColor(itemView.context, R.color.silver_sand))
+            }
+
         }
 
     }
@@ -52,7 +75,7 @@ class TaskAdapter(
     }
 
     override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
-        holder.bind(tasks[position], onDeleteClick)
+        holder.bind(tasks[position], onDeleteClick, onClick)
     }
 
     override fun getItemCount(): Int = tasks.size
@@ -68,5 +91,15 @@ class TaskAdapter(
         tasks.remove(task)
         notifyItemRemoved(deletePosition)
     }
+
+    fun updateTask(task: Task) {
+
+        val upDatePosition = tasks.indexOf(task)
+        tasks[upDatePosition] = task
+        notifyItemChanged(upDatePosition)
+
+    }
+
+    fun isEmpty() : Boolean = tasks.isEmpty()
 
 }
